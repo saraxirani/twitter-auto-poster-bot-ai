@@ -16,40 +16,41 @@ const generationConfig = {
 };
 const genAI = new GenAI.GoogleGenerativeAI(SECRETS.GEMINI_API_KEY);
 
-async function run() {
-  // For text-only input, use the gemini-pro model
+const REQUIRED_TAGS = "@giverep $REP @ikadotxyz $ikadotxyz";
+const TOTAL_TWEETS = 300;
+
+async function generateTweet() {
   const model = genAI.getGenerativeModel({
     model: "gemini-1.5-pro",
     generationConfig,
   });
 
-  // Write your prompt here
-  const prompt =
-    "در مورد توکن های sui بگو همراه با هشتگ ضمنا بیشتر از 280 کاراکتر نشود ضمنا در ده تویت قبلی متن مشابه نباشد" ;
+  const prompt = `
+    Generate a unique tweet about Giverep airdrop on Sui network.
+    Include information about:
+    - Giverep project
+    - Sui network benefits
+    - Airdrop details
+    - Community engagement
+    
+    The tweet must:
+    - Be under 280 characters
+    - Be engaging and informative
+    - Include emojis
+    - End with these tags: ${REQUIRED_TAGS}
+    - Be suitable for Twitter
+  `;
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
   const text = response.text();
-  console.log(text);
-  sendTweet(text);
+  
+  // Ensure the tweet is under 280 characters
+  const tweetText = text.length > 280 ? text.substring(0, 270) + "..." : text;
+  
+  console.log("Generated tweet:", tweetText);
+  return tweetText;
 }
-
-// Function to generate random interval between 3 and 10 minutes
-function getRandomInterval() {
-  return Math.floor(Math.random() * (10 - 3 + 1) + 3) * 60 * 1000; // Convert minutes to milliseconds
-}
-
-// Start the tweet posting loop
-async function startTweeting() {
-  while (true) {
-    await run();
-    const nextInterval = getRandomInterval();
-    console.log(`Next tweet in ${nextInterval / 60000} minutes`);
-    await new Promise(resolve => setTimeout(resolve, nextInterval));
-  }
-}
-
-startTweeting();
 
 async function sendTweet(tweetText) {
   try {
@@ -59,3 +60,28 @@ async function sendTweet(tweetText) {
     console.error("Error sending tweet:", error);
   }
 }
+
+async function main() {
+  let tweetsSent = 0;
+  
+  while (tweetsSent < TOTAL_TWEETS) {
+    try {
+      const tweet = await generateTweet();
+      await sendTweet(tweet);
+      tweetsSent++;
+      console.log(`Tweet ${tweetsSent} of ${TOTAL_TWEETS} sent successfully`);
+      
+      // Generate random interval between 2-10 minutes
+      const randomMinutes = Math.floor(Math.random() * 9) + 2;
+      console.log(`Waiting for ${randomMinutes} minutes before next tweet...`);
+      await new Promise(resolve => setTimeout(resolve, randomMinutes * 60 * 1000));
+    } catch (error) {
+      console.error("Error in main loop:", error);
+      // Wait a bit before retrying
+      await new Promise(resolve => setTimeout(resolve, 60 * 1000));
+    }
+  }
+  console.log("All tweets have been sent!");
+}
+
+main();
