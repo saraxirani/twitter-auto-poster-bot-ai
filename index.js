@@ -1,4 +1,4 @@
-// By VishwaGauravIn (https://itsvg.in)
+// By Razer
 
 const GenAI = require("@google/generative-ai");
 const { TwitterApi } = require("twitter-api-v2");
@@ -34,7 +34,22 @@ async function run() {
   sendTweet(text);
 }
 
-run();
+// Function to generate random interval between 3 and 10 minutes
+function getRandomInterval() {
+  return Math.floor(Math.random() * (10 - 3 + 1) + 3) * 60 * 1000; // Convert minutes to milliseconds
+}
+
+// Start the tweet posting loop
+async function startTweeting() {
+  while (true) {
+    await run();
+    const nextInterval = getRandomInterval();
+    console.log(`Next tweet in ${nextInterval / 60000} minutes`);
+    await new Promise(resolve => setTimeout(resolve, nextInterval));
+  }
+}
+
+startTweeting();
 
 async function sendTweet(tweetText) {
   try {
