@@ -16,8 +16,9 @@ const generationConfig = {
 };
 const genAI = new GenAI.GoogleGenerativeAI(SECRETS.GEMINI_API_KEY);
 
-const REQUIRED_TAGS = "@giverep $REP @ikadotxyz $ikadotxyz";
-const TOTAL_TWEETS = 300;
+const requiredTags = "@giverep $REP @ikadotxyz $ikadotxyz";
+const minInterval = 2 * 60 * 1000; // 2 minutes in milliseconds
+const maxInterval = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 async function generateTweet() {
   const model = genAI.getGenerativeModel({
@@ -26,62 +27,47 @@ async function generateTweet() {
   });
 
   const prompt = `
-    Generate a unique tweet about Giverep airdrop on Sui network.
-    Include information about:
-    - Giverep project
-    - Sui network benefits
-    - Airdrop details
-    - Community engagement
-    
-    The tweet must:
-    - Be under 280 characters
-    - Be engaging and informative
-    - Include emojis
-    - End with these tags: ${REQUIRED_TAGS}
-    - Be suitable for Twitter
+    Generate a tweet about GiveRep airdrop project on Sui network. 
+    Include these tags: ${requiredTags}
+    Keep it under 238 characters (excluding tags)
+    Make it engaging and informative
+    Use emojis where appropriate
+    Focus on benefits, features, or community aspects
   `;
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
-  const text = response.text();
+  const baseText = response.text();
   
-  // Ensure the tweet is under 280 characters
-  const tweetText = text.length > 280 ? text.substring(0, 270) + "..." : text;
+  // Combine base text with required tags
+  const tweetText = `${baseText} ${requiredTags}`;
   
-  console.log("Generated tweet:", tweetText);
+  // Ensure tweet is under 280 characters
+  if (tweetText.length > 280) {
+    const truncatedText = tweetText.substring(0, 280 - requiredTags.length - 3) + "..." + requiredTags;
+    return truncatedText;
+  }
   return tweetText;
 }
 
-async function sendTweet(tweetText) {
+async function sendTweet() {
   try {
+    const tweetText = await generateTweet();
     await twitterClient.v2.tweet(tweetText);
-    console.log("Tweet sent successfully!");
+    console.log("Tweet sent successfully!", tweetText);
+    
+    // Generate random interval between 2 and 10 minutes
+    const interval = Math.floor(Math.random() * (maxInterval - minInterval + 1)) + minInterval;
+    console.log(`Next tweet will be sent in ${Math.round(interval / 60000)} minutes`);
+    
+    // Schedule next tweet
+    setTimeout(sendTweet, interval);
   } catch (error) {
     console.error("Error sending tweet:", error);
+    // Retry after a minute if there's an error
+    setTimeout(sendTweet, 60000);
   }
 }
 
-async function main() {
-  let tweetsSent = 0;
-  
-  while (tweetsSent < TOTAL_TWEETS) {
-    try {
-      const tweet = await generateTweet();
-      await sendTweet(tweet);
-      tweetsSent++;
-      console.log(`Tweet ${tweetsSent} of ${TOTAL_TWEETS} sent successfully`);
-      
-      // Generate random interval between 2-10 minutes
-      const randomMinutes = Math.floor(Math.random() * 9) + 2;
-      console.log(`Waiting for ${randomMinutes} minutes before next tweet...`);
-      await new Promise(resolve => setTimeout(resolve, randomMinutes * 60 * 1000));
-    } catch (error) {
-      console.error("Error in main loop:", error);
-      // Wait a bit before retrying
-      await new Promise(resolve => setTimeout(resolve, 60 * 1000));
-    }
-  }
-  console.log("All tweets have been sent!");
-}
-
-main();
+// Start the tweeting process
+sendTweet();
