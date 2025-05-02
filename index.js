@@ -16,15 +16,11 @@ const generationConfig = {
 };
 const genAI = new GenAI.GoogleGenerativeAI(SECRETS.GEMINI_API_KEY);
 
-async function main() {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-preview-04-17",
-    contents: "Explain the Occam's Razor concept and provide everyday examples of it",
-    config: {
-      thinkingConfig: {
-        thinkingBudget: 1024,
-      },
-    },
+async function run() {
+  // For text-only input, use the gemini-pro model
+  const model = genAI.getGenerativeModel({
+    model: "gemini-1.5-pro",
+    generationConfig,
   });
 
   // Write your prompt here
