@@ -1,4 +1,4 @@
-// By Razer
+// By VishwaGauravIn (https://itsvg.in)
 
 const GenAI = require("@google/generative-ai");
 const { TwitterApi } = require("twitter-api-v2");
@@ -25,7 +25,7 @@ async function run() {
 
   // Write your prompt here
   const prompt =
-    "generate a web development content, tips and tricks or something new or some rant or some advice as a tweet, it should not be vague and should be unique; under 280 characters and should be plain text, you can use emojis";
+    "در مورد توکن های sui بگو همراه با هشتگ ضمنا بیشتر از 280 کاراکتر نشود ضمنا در ده تویت قبلی متن مشابه نباشد" ;
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
