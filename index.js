@@ -1,4 +1,4 @@
-// By VishwaGauravIn (https://itsvg.in)
+// By Mohammed Hamzeh
 
 const OpenAI = require("openai");
 const { TwitterApi } = require("twitter-api-v2");
