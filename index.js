@@ -1,6 +1,6 @@
 // By VishwaGauravIn (https://itsvg.in)
 
-const GenAI = require("@google/generative-ai");
+const OpenAI = require("openai");
 const { TwitterApi } = require("twitter-api-v2");
 const SECRETS = require("./SECRETS");
 
@@ -11,21 +11,17 @@ const twitterClient = new TwitterApi({
   accessSecret: SECRETS.ACCESS_SECRET,
 });
 
-const generationConfig = {
-  maxOutputTokens: 400,
-};
-const genAI = new GenAI.GoogleGenerativeAI(SECRETS.GEMINI_API_KEY);
+// Initialize DeepSeek API with OpenAI compatibility
+const openai = new OpenAI({
+  apiKey: SECRETS.DEEPSEEK_API_KEY,
+  baseURL: "https://api.deepseek.com/v1", // DeepSeek API endpoint
+});
 
 const requiredTags = "@giverep $REP @ikadotxyz $ikadotxyz";
 const minInterval = 2 * 60 * 1000; // 2 minutes in milliseconds
 const maxInterval = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 async function generateTweet() {
-  const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-pro",
-    generationConfig,
-  });
-
   const prompt = `
     Generate a tweet about GiveRep airdrop project on Sui network. 
     Include these tags: ${requiredTags}
@@ -35,9 +31,20 @@ async function generateTweet() {
     Focus on benefits, features, or community aspects
   `;
 
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  const baseText = response.text();
+  const response = await openai.chat.completions.create({
+    model: "deepseek-chat", // Using DeepSeek chat model
+    messages: [
+      {
+        role: "user",
+        content: prompt
+      }
+    ],
+    max_tokens: 400,
+    temperature: 0.7,
+  });
+
+  // Extract the tweet text from the response
+  const baseText = response.choices[0].message.content.trim();
   
   // Combine base text with required tags
   const tweetText = `${baseText} ${requiredTags}`;
