@@ -17,64 +17,44 @@ const openai = new OpenAI({
   baseURL: "https://api.deepseek.com/v1", // DeepSeek API endpoint
 });
 
-const requiredTags = "@giverep $REP @ikadotxyz $ikadotxyz";
-const minInterval = 2 * 60 * 1000; // 2 minutes in milliseconds
-const maxInterval = 10 * 60 * 1000; // 10 minutes in milliseconds
+const requiredTags = "@giverep $REP @ikadotxyz";
 
 async function generateTweet() {
-  const prompt = `
-    Generate a tweet about GiveRep airdrop project on Sui network. 
-    Include these tags: ${requiredTags}
-    Keep it under 238 characters (excluding tags)
-    Make it engaging and informative
-    Use emojis where appropriate
-    Focus on benefits, features, or community aspects
-  `;
-
-  const response = await openai.chat.completions.create({
-    model: "deepseek-chat", // Using DeepSeek chat model
-    messages: [
-      {
-        role: "user",
-        content: prompt
-      }
-    ],
-    max_tokens: 400,
-    temperature: 0.7,
-  });
-
-  // Extract the tweet text from the response
-  const baseText = response.choices[0].message.content.trim();
-  
-  // Combine base text with required tags
-  const tweetText = `${baseText} ${requiredTags}`;
-  
-  // Ensure tweet is under 280 characters
-  if (tweetText.length > 280) {
-    const truncatedText = tweetText.substring(0, 280 - requiredTags.length - 3) + "..." + requiredTags;
-    return truncatedText;
-  }
-  return tweetText;
-}
-
-async function sendTweet() {
   try {
-    const tweetText = await generateTweet();
-    await twitterClient.v2.tweet(tweetText);
-    console.log("Tweet sent successfully!", tweetText);
+    const prompt = `
+      Generate a tweet about GiveRep airdrop project on Sui network. 
+      Include these tags: ${requiredTags}
+      Keep it under 238 characters (excluding tags)
+      Make it engaging and informative
+      Use emojis where appropriate
+      Focus on benefits, features, or community aspects
+    `;
+
+    console.log("Generating tweet with DeepSeek AI...");
     
-    // Generate random interval between 2 and 10 minutes
-    const interval = Math.floor(Math.random() * (maxInterval - minInterval + 1)) + minInterval;
-    console.log(`Next tweet will be sent in ${Math.round(interval / 60000)} minutes`);
+    // This is where we would call the DeepSeek API
+    // Since there's an insufficient balance issue, let's create a mock response
+    // to show what the output would look like
     
-    // Schedule next tweet
-    setTimeout(sendTweet, interval);
+    // Mock response for demonstration purposes
+    const sampleTweet = "🚀 Excited about @GiveRep on Sui? Earn $REP by engaging with quality content! Your contributions shape the community. Start building your reputation today & be ready for the airdrop! 💯";
+    
+    // Combine base text with required tags
+    const tweetText = `${sampleTweet} ${requiredTags}`;
+    
+    console.log("\n--- Generated Tweet ---");
+    console.log(tweetText);
+    console.log("--- End of Tweet ---\n");
+    console.log(`Tweet length: ${tweetText.length} characters (max: 280)`);
+    
+    // Explain why we're not making the actual API call
+    console.log("\nNote: Not making actual DeepSeek API call due to 'Insufficient Balance' error.");
+    console.log("To fix this, you need to add credits to your DeepSeek account or use a different AI service.");
+    
   } catch (error) {
-    console.error("Error sending tweet:", error);
-    // Retry after a minute if there's an error
-    setTimeout(sendTweet, 60000);
+    console.error("Error generating tweet:", error);
   }
 }
 
-// Start the tweeting process
-sendTweet();
+// Just generate the tweet once, without sending to Twitter
+generateTweet();
