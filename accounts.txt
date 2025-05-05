@@ -1,0 +1,8 @@
+# Twitter accounts in format: APP_KEY,APP_SECRET,ACCESS_TOKEN,ACCESS_SECRET
+# Each line represents one account
+
+8iUjkiEDZHjEQ9DOfScoMauPV,fGic2xSjysWPxtglvaANbqDf949uOfzJp2whl6A3Py9ZwTWuFj,898656608280080385-01zb2FfHVLsvYCFG82yYRY15keugjwg,25hDdxwxdgQ0cVvjuIo2SM9PlcUmm5dQpzKPzACIAWZpU
+
+zMFmPc8sdLR3ESCQV6U0KVcAV,mH9IUxBwRnsGKol3iwdeHs9PiToZDR13qV6KHWY0QT47xS3u4y,1800327479711723520-4Kant8QSAK1wUECbtmADwGN52DNzOQ,XbZkKwmSdhzn1GdN5PxrTHbaiIrqigMV70UTgz2dT2Xkg
+
+# Add more accounts as needed, one per line in the same format
