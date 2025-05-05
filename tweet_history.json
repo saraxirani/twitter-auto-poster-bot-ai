@@ -1,0 +1,42 @@
+[
+  {
+    "timestamp": "2025-05-05T13:01:27.246Z",
+    "text": "⚡ Supercharge your Sui experience with GiveRep - earn tokens for meaningful contributions! @giverep $REP @ikadotxyz",
+    "accounts": [
+      {
+        "accountNumber": 1,
+        "success": true,
+        "simulated": false,
+        "tweetId": "1919376886158737466",
+        "error": null
+      },
+      {
+        "accountNumber": 2,
+        "success": true,
+        "simulated": false,
+        "tweetId": "1919376896292249716",
+        "error": null
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-05-05T13:02:01.895Z",
+    "text": "🎯 GiveRep lets you earn while you learn and engage with quality content on Sui network. Don't miss out! @giverep $REP @ikadotxyz",
+    "accounts": [
+      {
+        "accountNumber": 1,
+        "success": true,
+        "simulated": false,
+        "tweetId": "1919377031327887685",
+        "error": null
+      },
+      {
+        "accountNumber": 2,
+        "success": true,
+        "simulated": false,
+        "tweetId": "1919377041457103201",
+        "error": null
+      }
+    ]
+  }
+]
